@@ -33,14 +33,12 @@ services:
     image: postgres
     restart: always
     user: postgres
-    secrets:
-      - db-password
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=example
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-    expose:
+      - POSTGRES_PASSWORD=1234
+    ports:
       - 5432:5432
     healthcheck:
       test: ['CMD', 'pg_isready']
@@ -49,6 +47,3 @@ services:
       retries: 5
 volumes:
   db-data:
-secrets:
-  db-password:
-    file: db/password.txt
