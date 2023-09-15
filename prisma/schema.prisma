@@ -19,3 +19,8 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
+
+model Test{
+  id BigInt @id @default(autoincrement())
+  name String
+}
