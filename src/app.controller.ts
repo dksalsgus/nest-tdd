@@ -11,10 +11,4 @@ export class AppController {
     const userList = await this.appService.getListUser();
     return userList;
   }
-
-  @Get('/test')
-  async getListTest() {
-    const testList = await this.appService.getListTest();
-    return testList;
-  }
 }
