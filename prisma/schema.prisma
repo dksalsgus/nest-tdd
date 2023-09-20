@@ -12,12 +12,20 @@ datasource db {
 
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  password String
+  id    Int  @id @default(autoincrement())
+  email String  @unique @db.VarChar(40)
+  name  String? @db.VarChar(20)
+  password String @db.VarChar(20)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
   @@map("user")
+}
+
+model UserLog{
+  id Int @id @default(autoincrement())
+  user_id Int
+  title String @db.VarChar(50)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  @@map("user_log")
 }
