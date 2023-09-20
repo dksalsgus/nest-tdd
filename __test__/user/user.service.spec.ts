@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Test } from '@nestjs/testing';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/service/prisma.service';
@@ -16,6 +17,16 @@ describe('User Service Test', () => {
 
     expect(userRepository).toBeDefined();
     expect(userService).toBeDefined();
+  });
+
+  it('유저 추가', async () => {
+    jest.spyOn(userRepository, 'createUser').mockImplementation(async () => {
+      return 1;
+    });
+
+    const result = await userService.createUser();
+    expect(userRepository.createUser).toHaveBeenCalledTimes(1);
+    expect(result).toBe(1);
   });
 
   it('유저리스트', async () => {
