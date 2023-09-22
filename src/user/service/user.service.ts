@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { CreateUser } from '../model/create-user';
+import { RequestCreateUser } from '../model/request/request.create-user';
 import { UserLogRepository } from '../repository/user-log.repository';
 import { UserRepository } from '../repository/user.repository';
 
@@ -16,11 +16,16 @@ export class UserService {
     return list;
   }
 
-  async createUser(createUser: CreateUser): Promise<number> {
+  async createUser(requestCreateUser: RequestCreateUser): Promise<number> {
     //TODO: transaction
 
-    const userId = await this.userRepository.createUser(createUser);
-    const title = `${createUser.email} 생성`;
+    const { email, name, password } = requestCreateUser;
+    const userId = await this.userRepository.createUser({
+      email,
+      password,
+      name,
+    });
+    const title = `${requestCreateUser.email} 생성`;
     await this.userLogRepository.createUserLog({ title, userId });
 
     return userId;

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Test } from '@nestjs/testing';
 import { PrismaService } from 'src/prisma/service/prisma.service';
-import { CreateUser } from 'src/user/model/create-user';
+import { RequestCreateUser } from 'src/user/model/request/request.create-user';
 import { UserLogRepository } from 'src/user/repository/user-log.repository';
 import { UserRepository } from 'src/user/repository/user.repository';
 import { UserService } from 'src/user/service/user.service';
@@ -32,7 +32,7 @@ describe('User Service Test', () => {
     jest.clearAllMocks();
   });
 
-  const createUser: CreateUser = {
+  const createUser: RequestCreateUser = {
     email: 'test@email.com',
     password: '1234',
     name: '테스트',
