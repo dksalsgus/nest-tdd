@@ -17,7 +17,6 @@ export class UserService {
   }
 
   async createUser(requestCreateUser: RequestCreateUser): Promise<number> {
-    //TODO: transaction
     const prisma = new PrismaClient();
 
     const { email, name, password } = requestCreateUser;
