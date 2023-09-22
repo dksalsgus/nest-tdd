@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/service/prisma.service';
+import {
+  PrismaService,
+  PrismaTransaction,
+} from 'src/prisma/service/prisma.service';
 
 @Injectable()
 export class UserLogRepository {
@@ -12,9 +15,12 @@ export class UserLogRepository {
     return list;
   }
 
-  async createUserLog(createUserLog: CreateUserLog): Promise<void> {
+  async createUserLog(
+    createUserLog: CreateUserLog,
+    trx: PrismaTransaction,
+  ): Promise<void> {
     const { title, userId } = createUserLog;
-    const result = await this.prismaService.userLog.create({
+    const result = await trx.userLog.create({
       data: {
         title,
         user_id: userId,

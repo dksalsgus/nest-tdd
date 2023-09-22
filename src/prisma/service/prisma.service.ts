@@ -1,5 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import {
+  DefaultArgs,
+  PrismaClientOptions,
+} from '@prisma/client/runtime/library';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -11,3 +15,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     await this.$disconnect();
   }
 }
+
+export type PrismaTransaction = Omit<
+  PrismaClient<PrismaClientOptions, never, DefaultArgs>,
+  '$on' | '$connect' | '$disconnect' | '$use' | '$transaction' | '$extends'
+>;
