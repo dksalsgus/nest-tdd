@@ -16,16 +16,11 @@ export class UserService {
     return list;
   }
 
-  async createUser(): Promise<number> {
+  async createUser(createUser: CreateUser): Promise<number> {
     //TODO: transaction
-    const user: CreateUser = {
-      email: 'test@email.com',
-      password: '1234',
-      name: '테스트',
-    };
 
-    const userId = await this.userRepository.createUser(user);
-    const title = `${user.email} 생성`;
+    const userId = await this.userRepository.createUser(createUser);
+    const title = `${createUser.email} 생성`;
     await this.userLogRepository.createUserLog({ title, userId });
 
     return userId;

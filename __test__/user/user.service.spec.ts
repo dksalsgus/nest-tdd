@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Test } from '@nestjs/testing';
-import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/service/prisma.service';
+import { CreateUser } from 'src/user/model/create-user';
 import { UserLogRepository } from 'src/user/repository/user-log.repository';
 import { UserRepository } from 'src/user/repository/user.repository';
 import { UserService } from 'src/user/service/user.service';
@@ -32,6 +32,12 @@ describe('User Service Test', () => {
     jest.clearAllMocks();
   });
 
+  const createUser: CreateUser = {
+    email: 'test@email.com',
+    password: '1234',
+    name: '테스트',
+  };
+
   it('유저 추가', async () => {
     jest.spyOn(userRepository, 'createUser').mockImplementation(async () => {
       return 1;
@@ -42,7 +48,7 @@ describe('User Service Test', () => {
         return undefined;
       });
 
-    const result = await userService.createUser();
+    const result = await userService.createUser(createUser);
     expect(userLogRepository.createUserLog).toHaveBeenCalledTimes(1);
     expect(userRepository.createUser).toHaveBeenCalledTimes(1);
     expect(result).toBe(1);
@@ -50,19 +56,21 @@ describe('User Service Test', () => {
 
   it('유저리스트', async () => {
     jest.spyOn(userRepository, 'getListUser').mockImplementation(async () => {
-      const testUser: User = {
-        id: 1,
-        created_at: new Date(),
-        email: 'test@email.com',
-        name: '테스트',
-        password: '1234',
-        updated_at: new Date(),
-      };
-      return [testUser];
+      return [
+        {
+          id: 1,
+          email: createUser.email,
+          name: createUser.name,
+          password: createUser.password,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      ];
     });
     const userList = await userService.getListUser();
 
     expect(userRepository.getListUser).toHaveBeenCalledTimes(1);
     expect(userList).toHaveLength(1);
+    expect.arrayContaining(expect.objectContaining(createUser));
   });
 });
