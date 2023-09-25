@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { PrismaService } from 'src/prisma/service/prisma.service';
 import { RequestCreateUser } from 'src/user/model/request/request.create-user';
+import { RequestUpdateUser } from 'src/user/model/request/request.update-user';
 import { UserLogRepository } from 'src/user/repository/user-log.repository';
 import { UserRepository } from 'src/user/repository/user.repository';
 import { UserService } from 'src/user/service/user.service';
@@ -72,5 +74,21 @@ describe('User Service Test', () => {
     expect(userRepository.getListUser).toHaveBeenCalledTimes(1);
     expect(userList).toHaveLength(1);
     expect.arrayContaining(expect.objectContaining(createUser));
+  });
+
+  const updateUserInfo: RequestUpdateUser = { password: '3456' };
+  describe('유저 정보 수정', () => {
+    it('유저 존재하지 않는경우', async () => {
+      jest.spyOn(userRepository, 'findUser').mockImplementation(async () => {
+        throw new NotFoundException();
+      });
+
+      const { password } = updateUserInfo;
+      await expect(
+        userService.updateUser(1, { password }),
+      ).rejects.toThrowError(NotFoundException);
+
+      expect(userRepository.findUser).toHaveBeenCalledTimes(1);
+    });
   });
 });
