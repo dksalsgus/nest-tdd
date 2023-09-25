@@ -1,12 +1,21 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/prisma/service/prisma.service';
 import { RequestCreateUser } from 'src/user/model/request/request.create-user';
 import { RequestUpdateUser } from 'src/user/model/request/request.update-user';
+import { UpdateUser } from 'src/user/model/update-user';
 import { UserLogRepository } from 'src/user/repository/user-log.repository';
 import { UserRepository } from 'src/user/repository/user.repository';
 import { UserService } from 'src/user/service/user.service';
+
+export const prismaMock = {
+  entity: { findUnique: jest.fn() },
+  $transaction: jest
+    .fn()
+    .mockImplementation((callback) => callback(prismaMock)),
+};
 
 describe('User Service Test', () => {
   let userService: UserService;
@@ -78,18 +87,22 @@ describe('User Service Test', () => {
 
   describe('유저 정보 수정', () => {
     const requestUpdateUser: RequestUpdateUser = { password: '3456' };
+    const { password } = requestUpdateUser;
+    const updateUser: UpdateUser = { password };
     const userId = 1;
+    const prisma = new PrismaClient();
+
     it('유저 존재하지 않는경우', async () => {
       jest.spyOn(userRepository, 'findUser').mockImplementation(async () => {
         throw new NotFoundException();
       });
 
-      const { password } = requestUpdateUser;
       await expect(
-        userService.updateUser(userId, { password }),
+        userService.updateUser(userId, updateUser),
       ).rejects.toThrowError(NotFoundException);
 
       expect(userRepository.findUser).toHaveBeenCalledTimes(1);
+      expect(userRepository.findUser).toHaveBeenCalledWith(userId);
     });
 
     it('유저 정보수정 정상', async () => {
@@ -108,6 +121,7 @@ describe('User Service Test', () => {
       const { password } = requestUpdateUser;
       await userService.updateUser(userId, { password });
       expect(userRepository.findUser).toHaveBeenCalledTimes(1);
+      expect(userRepository.findUser).toHaveBeenCalledWith(userId);
       expect(userRepository.updateUser).toHaveBeenCalledTimes(1);
       expect(userLogRepository.createUserLog).toHaveBeenCalledTimes(1);
     });
