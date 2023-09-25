@@ -76,19 +76,40 @@ describe('User Service Test', () => {
     expect.arrayContaining(expect.objectContaining(createUser));
   });
 
-  const updateUserInfo: RequestUpdateUser = { password: '3456' };
   describe('유저 정보 수정', () => {
+    const requestUpdateUser: RequestUpdateUser = { password: '3456' };
+    const userId = 1;
     it('유저 존재하지 않는경우', async () => {
       jest.spyOn(userRepository, 'findUser').mockImplementation(async () => {
         throw new NotFoundException();
       });
 
-      const { password } = updateUserInfo;
+      const { password } = requestUpdateUser;
       await expect(
-        userService.updateUser(1, { password }),
+        userService.updateUser(userId, { password }),
       ).rejects.toThrowError(NotFoundException);
 
       expect(userRepository.findUser).toHaveBeenCalledTimes(1);
+    });
+
+    it('유저 정보수정 정상', async () => {
+      jest.spyOn(userRepository, 'findUser').mockImplementation(async () => {
+        return 1;
+      });
+
+      jest
+        .spyOn(userRepository, 'updateUser')
+        .mockImplementation(async () => {});
+
+      jest
+        .spyOn(userLogRepository, 'createUserLog')
+        .mockImplementation(async () => {});
+
+      const { password } = requestUpdateUser;
+      await userService.updateUser(userId, { password });
+      expect(userRepository.findUser).toHaveBeenCalledTimes(1);
+      expect(userRepository.updateUser).toHaveBeenCalledTimes(1);
+      expect(userLogRepository.createUserLog).toHaveBeenCalledTimes(1);
     });
   });
 });
