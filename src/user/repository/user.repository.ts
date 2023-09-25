@@ -5,6 +5,7 @@ import {
   PrismaTransaction,
 } from '../../prisma/service/prisma.service';
 import { CreateUser } from '../model/create-user';
+import { UpdateUser } from '../model/update-user';
 
 @Injectable()
 export class UserRepository {
@@ -24,5 +25,25 @@ export class UserRepository {
       data: createUser,
     });
     return result.id;
+  }
+
+  async updateUser(
+    userId: number,
+    updateUser: UpdateUser,
+    trx: PrismaTransaction,
+  ): Promise<void> {
+    const result = await trx.user.update({
+      data: updateUser,
+      where: { id: userId },
+    });
+  }
+
+  async findUser(userId: number): Promise<number> {
+    const user = await this.prismaService.user.findFirst({
+      select: { id: true },
+      where: { id: userId },
+    });
+    const { id } = user;
+    return id;
   }
 }

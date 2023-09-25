@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient, User } from '@prisma/client';
 import { RequestCreateUser } from '../model/request/request.create-user';
+import { RequestUpdateUser } from '../model/request/request.update-user';
 import { UserLogRepository } from '../repository/user-log.repository';
 import { UserRepository } from '../repository/user.repository';
 
@@ -35,5 +36,20 @@ export class UserService {
     });
 
     return userId;
+  }
+
+  async updateUser(
+    userId: number,
+    requestUpdateUser: RequestUpdateUser,
+  ): Promise<void> {
+    const prisma = new PrismaClient();
+
+    await this.userRepository.findUser(userId);
+    const { password } = requestUpdateUser;
+    await prisma.$transaction(async (trx) => {
+      await this.userRepository.updateUser(userId, { password }, trx);
+      const title = '유저 정보 수정';
+      await this.userLogRepository.createUserLog({ title, userId }, trx);
+    });
   }
 }
