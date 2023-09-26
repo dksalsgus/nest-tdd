@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient, User } from '@prisma/client';
 import { RequestCreateUser } from '../model/request/request.create-user';
 import { RequestUpdateUser } from '../model/request/request.update-user';
@@ -54,6 +54,18 @@ export class UserService {
   }
 
   async deleteUser(userId: number): Promise<void> {
+    const prisma = new PrismaClient();
     const user = await this.userRepository.findUser(userId);
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    await prisma.$transaction(async (trx) => {
+      await this.userRepository.deleteUser(userId, trx);
+      await this.userLogRepository.createUserLog(
+        { title: '유저 삭제', userId },
+        trx,
+      );
+    });
   }
 }

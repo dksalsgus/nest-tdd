@@ -139,5 +139,25 @@ describe('User Service Test', () => {
 
       expect(userRepository.findUser).toHaveBeenCalledTimes(1);
     });
+
+    it('삭제 성공', async () => {
+      jest
+        .spyOn(userRepository, 'findUser')
+        .mockImplementation(async () => userId);
+
+      jest
+        .spyOn(userRepository, 'deleteUser')
+        .mockImplementation(async () => {});
+
+      jest
+        .spyOn(userLogRepository, 'createUserLog')
+        .mockImplementation(async () => {});
+
+      await userService.deleteUser(userId);
+
+      expect(userRepository.findUser).toHaveBeenCalledTimes(1);
+      expect(userRepository.deleteUser).toHaveBeenCalledTimes(1);
+      expect(userLogRepository.createUserLog).toHaveBeenCalledTimes(1);
+    });
   });
 });

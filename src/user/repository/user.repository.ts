@@ -46,4 +46,8 @@ export class UserRepository {
     const { id } = user;
     return id;
   }
+
+  async deleteUser(userId: number, trx: PrismaTransaction): Promise<void> {
+    const resutl = await trx.user.delete({ where: { id: userId } });
+  }
 }
