@@ -52,4 +52,8 @@ export class UserService {
       await this.userLogRepository.createUserLog({ title, userId }, trx);
     });
   }
+
+  async deleteUser(userId: number): Promise<void> {
+    const user = await this.userRepository.findUser(userId);
+  }
 }

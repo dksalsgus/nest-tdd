@@ -126,4 +126,18 @@ describe('User Service Test', () => {
       expect(userLogRepository.createUserLog).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('유저 삭제', () => {
+    const userId = 1;
+    it('유저가 없는경우', async () => {
+      jest.spyOn(userRepository, 'findUser').mockImplementation(() => {
+        throw new NotFoundException();
+      });
+      await expect(userService.deleteUser(userId)).rejects.toThrowError(
+        NotFoundException,
+      );
+
+      expect(userRepository.findUser).toHaveBeenCalledTimes(1);
+    });
+  });
 });
