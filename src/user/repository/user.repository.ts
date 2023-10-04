@@ -39,7 +39,7 @@ export class UserRepository {
   }
 
   async findUser(userId: number): Promise<number> {
-    const user = await this.prismaService.user.findFirst({
+    const user = await this.prismaService.user.findFirstOrThrow({
       select: { id: true },
       where: { id: userId },
     });

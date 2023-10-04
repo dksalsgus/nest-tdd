@@ -68,4 +68,9 @@ export class UserService {
       );
     });
   }
+
+  async findUser(userId: number): Promise<number> {
+    const id = await this.userRepository.findUser(userId);
+    return id;
+  }
 }

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/prisma/service/prisma.service';
 import { RequestCreateUser } from 'src/user/model/request/request.create-user';
 import { RequestUpdateUser } from 'src/user/model/request/request.update-user';
@@ -65,6 +64,32 @@ describe('User Service Test', () => {
     expect(result).toBe(1);
   });
 
+  describe('findUser', () => {
+    let findUserId = 0;
+    it('유저 없는경우', async () => {
+      findUserId = 100;
+      jest
+        .spyOn(userRepository, 'findUser')
+        .mockRejectedValue(new NotFoundException());
+
+      await expect(
+        async () => await userService.findUser(findUserId),
+      ).rejects.toThrowError(NotFoundException);
+
+      expect(userRepository.findUser).toHaveBeenCalledTimes(1);
+    });
+
+    it('유저 정보', async () => {
+      findUserId = 1;
+      jest.spyOn(userRepository, 'findUser').mockImplementation(async () => {
+        return findUserId;
+      });
+      const userId = await userService.findUser(findUserId);
+      expect(findUserId).toEqual(userId);
+      expect(userRepository.findUser).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it('유저리스트', async () => {
     jest.spyOn(userRepository, 'getListUser').mockImplementation(async () => {
       return [
@@ -90,7 +115,6 @@ describe('User Service Test', () => {
     const { password } = requestUpdateUser;
     const updateUser: UpdateUser = { password };
     const userId = 1;
-    const prisma = new PrismaClient();
 
     it('유저 존재하지 않는경우', async () => {
       jest.spyOn(userRepository, 'findUser').mockImplementation(async () => {
