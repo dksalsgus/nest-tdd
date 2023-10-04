@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaClient, User } from '@prisma/client';
+import { User } from '@prisma/client';
+import { PrismaService } from 'src/prisma/service/prisma.service';
 import { RequestCreateUser } from '../model/request/request.create-user';
 import { RequestUpdateUser } from '../model/request/request.update-user';
 import { UserLogRepository } from '../repository/user-log.repository';
@@ -10,6 +11,7 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly userLogRepository: UserLogRepository,
+    private readonly prismaService: PrismaService,
   ) {}
 
   async getListUser(): Promise<User[]> {
@@ -18,10 +20,8 @@ export class UserService {
   }
 
   async createUser(requestCreateUser: RequestCreateUser): Promise<number> {
-    const prisma = new PrismaClient();
-
     const { email, name, password } = requestCreateUser;
-    const userId = await prisma.$transaction(async (trx) => {
+    const userId = await this.prismaService.$transaction(async (trx) => {
       const userId = await this.userRepository.createUser(
         {
           email,
@@ -42,11 +42,9 @@ export class UserService {
     userId: number,
     requestUpdateUser: RequestUpdateUser,
   ): Promise<void> {
-    const prisma = new PrismaClient();
-
     await this.userRepository.findUser(userId);
     const { password } = requestUpdateUser;
-    await prisma.$transaction(async (trx) => {
+    await this.prismaService.$transaction(async (trx) => {
       await this.userRepository.updateUser(userId, { password }, trx);
       const title = '유저 정보 수정';
       await this.userLogRepository.createUserLog({ title, userId }, trx);
@@ -54,13 +52,12 @@ export class UserService {
   }
 
   async deleteUser(userId: number): Promise<void> {
-    const prisma = new PrismaClient();
     const user = await this.userRepository.findUser(userId);
     if (!user) {
       throw new NotFoundException();
     }
 
-    await prisma.$transaction(async (trx) => {
+    await this.prismaService.$transaction(async (trx) => {
       await this.userRepository.deleteUser(userId, trx);
       await this.userLogRepository.createUserLog(
         { title: '유저 삭제', userId },
