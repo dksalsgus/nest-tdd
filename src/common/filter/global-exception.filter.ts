@@ -1,9 +1,9 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
-import { GlobalCustomError } from '../exception/global-exeption';
+import { GlobalCustomException } from '../exception/global-exeption';
 
-@Catch(GlobalCustomError)
+@Catch(GlobalCustomException)
 export class GlobalExceptionFilter implements ExceptionFilter {
-  catch(exception: GlobalCustomError, host: ArgumentsHost) {
+  catch(exception: GlobalCustomException, host: ArgumentsHost) {
     console.log('global exception filter ', exception);
   }
 }

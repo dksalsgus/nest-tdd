@@ -1,4 +1,4 @@
-export class GlobalCustomError extends Error {
+export class GlobalCustomException extends Error {
   constructor(private readonly errorMessage: string) {
     super(errorMessage);
   }
