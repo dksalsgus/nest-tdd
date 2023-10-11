@@ -21,12 +21,23 @@ export class AuthService {
     return response.data;
   }
 
-  async naverToken(requestNaverCallBackQuery: RequestNaverCallBackQuery) {
+  async getNaverToken(requestNaverCallBackQuery: RequestNaverCallBackQuery) {
     const { code, state } = requestNaverCallBackQuery;
     const requestUrl =
       this.naverTokenUrl +
       `?grant_type=authorization_code&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&code=${code}&state=${state}`;
-    const response = await this.httpProvider.post(requestUrl, {}, {});
-    return response.data;
+    const data = await this.httpProvider.post<NaverOauthToken>(
+      requestUrl,
+      {},
+      {},
+    );
+    return data;
   }
+}
+
+export interface NaverOauthToken {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  expires_in: string;
 }

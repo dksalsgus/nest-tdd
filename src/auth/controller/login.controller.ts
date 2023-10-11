@@ -19,13 +19,9 @@ export class LoginController {
   async naverLoginCallback(
     @Query() requestNaverCallBackQuery: RequestNaverCallBackQuery,
   ) {
-    const result = await this.authService.naverToken(requestNaverCallBackQuery);
-    // {
-    //   "access_token": "",
-    //   "refresh_token": "",
-    //   "token_type": "bearer",
-    //   "expires_in": "3600"
-    //   }
+    const result = await this.authService.getNaverToken(
+      requestNaverCallBackQuery,
+    );
     return result;
   }
 }
