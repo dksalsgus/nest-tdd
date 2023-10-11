@@ -1,6 +1,8 @@
 import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 
+@Injectable()
 export class HttpProvider {
   constructor(private readonly httpService: HttpService) {}
 
