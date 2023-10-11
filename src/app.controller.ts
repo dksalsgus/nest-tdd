@@ -1,6 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { User } from '@prisma/client';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
 
 @Controller()
@@ -9,8 +8,8 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  async getHello(): Promise<User[]> {
-    const userList = await this.appService.getListUser();
-    return userList;
+  @ApiOperation({ summary: 'home', description: 'Get Hello' })
+  async getHello(): Promise<string> {
+    return 'Hello Nest Tdd';
   }
 }
