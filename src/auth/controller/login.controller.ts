@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../service/auth.service';
 
@@ -9,8 +9,14 @@ export class LoginController {
 
   @Post('/oauth/naver')
   @ApiOperation({ summary: '네이버 Oauth' })
-  async naver() {
-    const response = await this.authService.test();
-    return response;
+  async naverLogin() {
+    const result = await this.authService.naverLogin();
+    return result;
+  }
+
+  @Get('/oauth/naver/callback')
+  @ApiOperation({ summary: '네이버 Oauth CallBack' })
+  async naverLoginCallback(@Query('code') code: string) {
+    console.log(code);
   }
 }
