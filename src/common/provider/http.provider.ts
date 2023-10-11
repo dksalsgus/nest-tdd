@@ -7,7 +7,12 @@ export class HttpProvider {
   constructor(private readonly httpService: HttpService) {}
 
   async get(url: string, config: AxiosRequestConfig) {
-    const response = await this.httpService.get(url, config);
+    const response = await this.httpService.axiosRef.get(url, config);
+    return response;
+  }
+
+  async post(url: string, body: any, config: AxiosRequestConfig) {
+    const response = await this.httpService.axiosRef.post(url, body, config);
     return response;
   }
 }
