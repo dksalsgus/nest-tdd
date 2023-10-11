@@ -21,8 +21,8 @@ export class LoginController {
   ) {
     const result = await this.authService.naverToken(requestNaverCallBackQuery);
     // {
-    //   "access_token": "AAAAOUPy906sclGIoTYyhUcWwp4v83eKPnMl73Zg-gvcVR8Mjvs__0hPoLIEf6UiAb2MUtJ6qbiH_NKw0oi45S1m9uI",
-    //   "refresh_token": "ipqThXJmojJz4R0DoogtfJnFzsmadVcwNTcErIN7j4cIOjW8iieun8SvgkYipcQyKdHg1Urm1d3WP5RHP66pdUNRenLUnDvSuS7rXlxrxzVqmWYeJip7yxXXXmiif5bYHqisZr",
+    //   "access_token": "",
+    //   "refresh_token": "",
     //   "token_type": "bearer",
     //   "expires_in": "3600"
     //   }
