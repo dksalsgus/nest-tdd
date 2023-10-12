@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpProvider } from 'src/common/provider/http.provider';
 import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-token';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
+import { RequestNaverUserInfo } from '../model/request/request.naver-user-info';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
 
 @Injectable()
@@ -10,6 +11,8 @@ export class NaverOauthService {
   private readonly naverCallbackUrl =
     'http://localhost:3000/login/oauth/naver/callback';
   private readonly naverTokenUrl = 'https://nid.naver.com/oauth2.0/token';
+  private readonly naverUserApiUrl = 'https://openapi.naver.com/v1/nid/me';
+
   constructor(private readonly httpProvider: HttpProvider) {}
 
   async naverLoginAuth(): Promise<string> {
@@ -69,6 +72,14 @@ export class NaverOauthService {
       {},
       {},
     );
+    return data;
+  }
+
+  async getNaverUserInfo(requestNaverUserInfo: RequestNaverUserInfo) {
+    const { token, tokenType } = requestNaverUserInfo;
+    const data = await this.httpProvider.get(this.naverUserApiUrl, {
+      headers: { Authorization: `${tokenType} ${token}` },
+    });
     return data;
   }
 }

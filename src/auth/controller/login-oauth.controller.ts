@@ -11,6 +11,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-token';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
+import { RequestNaverUserInfo } from '../model/request/request.naver-user-info';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
 import {
   ResponseNaverDeleteToken,
@@ -87,5 +88,19 @@ export class LoginOauthController {
     );
     const { access_token: accessToken, result: deleteResult } = result;
     return { accessToken, result: deleteResult };
+  }
+
+  @Post('/naver/user')
+  @ApiOperation({ summary: '네이버 유저 정보' })
+  @ApiResponse({
+    description: '네이버 유저 정보',
+  })
+  async getUserInfo(
+    @Body() requestNaverUserInfo: RequestNaverUserInfo,
+  ): Promise<any> {
+    const result = await this.naverOauthService.getNaverUserInfo(
+      requestNaverUserInfo,
+    );
+    return result;
   }
 }
