@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { HttpProvider } from 'src/common/provider/http.provider';
+import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-token';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
+import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
 
 @Injectable()
 export class NaverOauthService {
@@ -21,13 +23,47 @@ export class NaverOauthService {
     return requestUrl;
   }
 
-  async getNaverToken(
+  async getAccesToken(
     requestNaverCallBackQuery: RequestNaverCallBackQuery,
   ): Promise<NaverOauthToken> {
     const { code, state } = requestNaverCallBackQuery;
+    const grantType = EnNaverGrantType.authorizationCode;
     const requestUrl =
       this.naverTokenUrl +
-      `?grant_type=authorization_code&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&code=${code}&state=${state}`;
+      `?grant_type=${grantType}&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&code=${code}&state=${state}`;
+    const data = await this.httpProvider.post<NaverOauthToken>(
+      requestUrl,
+      {},
+      {},
+    );
+    return data;
+  }
+
+  async refreshAccessToken(
+    requestRefreshNaverAccessToken: RequestRefreshNaverAccessToken,
+  ): Promise<NaverOauthToken> {
+    const grantType = EnNaverGrantType.refreshToken;
+    const { refreshToken } = requestRefreshNaverAccessToken;
+    const requestUrl =
+      this.naverTokenUrl +
+      `?grant_type=${grantType}&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&refresh_token=${refreshToken}`;
+    const data = await this.httpProvider.post<NaverOauthToken>(
+      requestUrl,
+      {},
+      {},
+    );
+    return data;
+  }
+
+  async deleteToken(
+    requestDeleteNaverToken: RequestDeleteNaverToken,
+  ): Promise<NaverOauthToken> {
+    const grantType = EnNaverGrantType.delete;
+    const serviceProvider = 'NAVER';
+    const { accessToken } = requestDeleteNaverToken;
+    const requestUrl =
+      this.naverTokenUrl +
+      `?grant_type=${grantType}&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&access_token=${accessToken}&service_provider=${serviceProvider}`;
     const data = await this.httpProvider.post<NaverOauthToken>(
       requestUrl,
       {},
@@ -42,4 +78,10 @@ export interface NaverOauthToken {
   refresh_token: string;
   token_type: string;
   expires_in: string;
+}
+
+export enum EnNaverGrantType {
+  authorizationCode = 'authorization_code',
+  refreshToken = 'refresh_token',
+  delete = 'delete',
 }
