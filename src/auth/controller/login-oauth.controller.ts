@@ -3,17 +3,17 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
 import { ResponseNaverLogin } from '../model/response/response.naver-login';
-import { AuthService } from '../service/auth.service';
+import { NaverOauthService } from '../service/naver-oauth.service';
 
 @ApiTags('Oauth Login')
 @Controller('/login/oauth')
 export class LoginOauthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly naverOauthService: NaverOauthService) {}
 
   @Get('/naver')
   @ApiOperation({ summary: '네이버 Oauth' })
   async naverLogin(@Res() res: Response): Promise<void> {
-    const result = await this.authService.naverLoginAuth();
+    const result = await this.naverOauthService.naverLoginAuth();
     return res.redirect(result);
   }
 
@@ -22,7 +22,7 @@ export class LoginOauthController {
   async naverLoginCallback(
     @Query() requestNaverCallBackQuery: RequestNaverCallBackQuery,
   ): Promise<ResponseNaverLogin> {
-    const result = await this.authService.getNaverToken(
+    const result = await this.naverOauthService.getNaverToken(
       requestNaverCallBackQuery,
     );
     const {
