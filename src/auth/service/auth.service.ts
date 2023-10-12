@@ -10,7 +10,7 @@ export class AuthService {
   private readonly naverTokenUrl = 'https://nid.naver.com/oauth2.0/token';
   constructor(private readonly httpProvider: HttpProvider) {}
 
-  async naverLoginAuth() {
+  async naverLoginAuth(): Promise<string> {
     const requestUrl =
       this.naverAuthUrl +
       `?response_type=code&client_id=${
@@ -18,10 +18,12 @@ export class AuthService {
       }&redirect_uri=${this.naverCallbackUrl}&state=${'RAMDOM_STATE'}`;
     console.log(requestUrl);
     const response = await this.httpProvider.get(requestUrl, {});
-    return response.data;
+    return requestUrl;
   }
 
-  async getNaverToken(requestNaverCallBackQuery: RequestNaverCallBackQuery) {
+  async getNaverToken(
+    requestNaverCallBackQuery: RequestNaverCallBackQuery,
+  ): Promise<NaverOauthToken> {
     const { code, state } = requestNaverCallBackQuery;
     const requestUrl =
       this.naverTokenUrl +
