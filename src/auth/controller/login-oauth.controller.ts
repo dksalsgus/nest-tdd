@@ -1,5 +1,5 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
 import { ResponseNaverLogin } from '../model/response/response.naver-login';
@@ -19,6 +19,7 @@ export class LoginOauthController {
 
   @Get('/naver/callback')
   @ApiOperation({ summary: '네이버 Oauth CallBack' })
+  @ApiCreatedResponse({ description: '토큰', type: ResponseNaverLogin })
   async naverLoginCallback(
     @Query() requestNaverCallBackQuery: RequestNaverCallBackQuery,
   ): Promise<ResponseNaverLogin> {
