@@ -25,13 +25,13 @@ export class NaverOauthService {
 
   async getAccesToken(
     requestNaverCallBackQuery: RequestNaverCallBackQuery,
-  ): Promise<NaverOauthToken> {
+  ): Promise<NaverOauthTokenResult> {
     const { code, state } = requestNaverCallBackQuery;
     const grantType = EnNaverGrantType.authorizationCode;
     const requestUrl =
       this.naverTokenUrl +
       `?grant_type=${grantType}&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&code=${code}&state=${state}`;
-    const data = await this.httpProvider.post<NaverOauthToken>(
+    const data = await this.httpProvider.post<NaverOauthTokenResult>(
       requestUrl,
       {},
       {},
@@ -41,13 +41,13 @@ export class NaverOauthService {
 
   async refreshAccessToken(
     requestRefreshNaverAccessToken: RequestRefreshNaverAccessToken,
-  ): Promise<NaverOauthToken> {
+  ): Promise<NaverOauthTokenRefreshResult> {
     const grantType = EnNaverGrantType.refreshToken;
     const { refreshToken } = requestRefreshNaverAccessToken;
     const requestUrl =
       this.naverTokenUrl +
       `?grant_type=${grantType}&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&refresh_token=${refreshToken}`;
-    const data = await this.httpProvider.post<NaverOauthToken>(
+    const data = await this.httpProvider.post<NaverOauthTokenRefreshResult>(
       requestUrl,
       {},
       {},
@@ -57,14 +57,14 @@ export class NaverOauthService {
 
   async deleteToken(
     requestDeleteNaverToken: RequestDeleteNaverToken,
-  ): Promise<NaverOauthToken> {
+  ): Promise<NaverOauthTokenDeleteResult> {
     const grantType = EnNaverGrantType.delete;
     const serviceProvider = 'NAVER';
     const { accessToken } = requestDeleteNaverToken;
     const requestUrl =
       this.naverTokenUrl +
       `?grant_type=${grantType}&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&access_token=${accessToken}&service_provider=${serviceProvider}`;
-    const data = await this.httpProvider.post<NaverOauthToken>(
+    const data = await this.httpProvider.post<NaverOauthTokenDeleteResult>(
       requestUrl,
       {},
       {},
@@ -73,11 +73,22 @@ export class NaverOauthService {
   }
 }
 
-export interface NaverOauthToken {
+export interface NaverOauthTokenResult {
   access_token: string;
   refresh_token: string;
   token_type: string;
   expires_in: string;
+}
+
+export interface NaverOauthTokenRefreshResult
+  extends Pick<
+    NaverOauthTokenResult,
+    'access_token' | 'expires_in' | 'token_type'
+  > {}
+
+export interface NaverOauthTokenDeleteResult
+  extends Pick<NaverOauthTokenResult, 'access_token'> {
+  result: string;
 }
 
 export enum EnNaverGrantType {

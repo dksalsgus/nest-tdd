@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 
 export class ResponseNaverLogin {
   @ApiProperty({
@@ -21,4 +21,17 @@ export class ResponseNaverLogin {
     example: '3600',
   })
   expiresIn: string;
+}
+
+export class ResponseNaverTokenRefresh extends PickType(ResponseNaverLogin, [
+  'accessToken',
+  'tokenType',
+  'expiresIn',
+]) {}
+
+export class ResponseNaverDeleteToken extends PickType(ResponseNaverLogin, [
+  'accessToken',
+]) {
+  @ApiProperty({ description: '성공시 success', example: 'success' })
+  result: string;
 }
