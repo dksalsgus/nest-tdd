@@ -1,5 +1,10 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
 import { ResponseNaverLogin } from '../model/response/response.naver-login';
@@ -12,6 +17,7 @@ export class LoginOauthController {
 
   @Get('/naver')
   @ApiOperation({ summary: '네이버 Oauth' })
+  @ApiResponse({ description: 'redirect naver oauth callback' })
   async naverLogin(@Res() res: Response): Promise<void> {
     const result = await this.naverOauthService.naverLoginAuth();
     return res.redirect(result);
