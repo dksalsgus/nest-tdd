@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ResponseNaverLogin {
   @ApiProperty({
-    description: '엑세스 토',
+    description: '엑세스 토큰',
     example: 'access_tokenadsfsafsda',
   })
   accessToken: string;
