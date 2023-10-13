@@ -1,13 +1,16 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 @Injectable()
 export class HttpProvider {
   constructor(private readonly httpService: HttpService) {}
 
-  async get(url: string, config: AxiosRequestConfig) {
-    const response = await this.httpService.axiosRef.get(url, config);
+  async get<T>(
+    url: string,
+    config: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>> {
+    const response = await this.httpService.axiosRef.get<T>(url, config);
     return response;
   }
 
