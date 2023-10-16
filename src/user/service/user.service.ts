@@ -20,13 +20,14 @@ export class UserService {
   }
 
   async createUser(requestCreateUser: RequestCreateUser): Promise<number> {
-    const { email, name, password } = requestCreateUser;
+    const { email, name, password, phone } = requestCreateUser;
     const userId = await this.prismaService.$transaction(async (trx) => {
       const userId = await this.userRepository.createUser(
         {
           email,
           password,
           name,
+          phone,
         },
         trx,
       );

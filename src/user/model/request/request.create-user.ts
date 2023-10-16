@@ -7,4 +7,6 @@ export class RequestCreateUser {
   name: string;
   @ApiProperty({ description: '패스워드', example: 'honggildong1234' })
   password: string;
+  @ApiProperty({ description: '휴대전화 번호', example: '010-1234-1234' })
+  phone: string;
 }
