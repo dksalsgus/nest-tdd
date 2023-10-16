@@ -75,12 +75,18 @@ export class NaverOauthService {
     return data;
   }
 
-  async getNaverUserInfo(requestNaverUserInfo: RequestNaverUserInfo) {
+  async getNaverUserInfo(
+    requestNaverUserInfo: RequestNaverUserInfo,
+  ): Promise<NaverUserResponse> {
     const { token, tokenType } = requestNaverUserInfo;
-    const data = await this.httpProvider.get(this.naverUserApiUrl, {
-      headers: { Authorization: `${tokenType} ${token}` },
-    });
-    return data;
+    const response = await this.httpProvider.get<NaverUserInfo>(
+      this.naverUserApiUrl,
+      {
+        headers: { Authorization: `${tokenType} ${token}` },
+      },
+    );
+    const { response: info } = response.data;
+    return info;
   }
 }
 
@@ -106,4 +112,19 @@ export enum EnNaverGrantType {
   authorizationCode = 'authorization_code',
   refreshToken = 'refresh_token',
   delete = 'delete',
+}
+
+interface NaverUserResponse {
+  birthyear: string;
+  email: string;
+  id: string;
+  mobile: string;
+  mobile_e164: string;
+  name: string;
+}
+
+export interface NaverUserInfo {
+  resultCode: string;
+  message: string;
+  response: NaverUserResponse;
 }

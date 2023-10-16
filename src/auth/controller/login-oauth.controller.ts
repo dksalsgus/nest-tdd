@@ -18,6 +18,7 @@ import {
   ResponseNaverLogin,
   ResponseNaverTokenRefresh,
 } from '../model/response/response.naver-login';
+import { ResponseNaverUserInfo } from '../model/response/response.naver-user-info';
 import { NaverOauthService } from '../service/naver-oauth.service';
 
 @ApiTags('Oauth Login')
@@ -94,13 +95,22 @@ export class LoginOauthController {
   @ApiOperation({ summary: '네이버 유저 정보' })
   @ApiResponse({
     description: '네이버 유저 정보',
+    type: ResponseNaverUserInfo,
   })
   async getUserInfo(
     @Body() requestNaverUserInfo: RequestNaverUserInfo,
-  ): Promise<any> {
+  ): Promise<ResponseNaverUserInfo> {
     const result = await this.naverOauthService.getNaverUserInfo(
       requestNaverUserInfo,
     );
-    return result;
+    const {
+      birthyear: birthYear,
+      email,
+      id,
+      mobile,
+      mobile_e164: mobileE164,
+      name,
+    } = result;
+    return { id, email, mobile, mobileE164, name, birthYear };
   }
 }
