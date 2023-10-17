@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { HttpProvider } from 'src/common/provider/http.provider';
 import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-token';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
@@ -8,7 +9,7 @@ import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh
 @Injectable()
 export class NaverOauthRepository {
   private get serverUrl(): string {
-    return process.env.SERVER_URL;
+    return this.configService.get('SERVER_URL');
   }
   private readonly naverAuthUrl = 'https://nid.naver.com/oauth2.0/authorize';
   private readonly naverCallbackUrl =
@@ -17,29 +18,24 @@ export class NaverOauthRepository {
   private readonly naverUserApiUrl = 'https://openapi.naver.com/v1/nid/me';
 
   private get naverClientId(): string {
-    const clientId = process.env.NAVER_CLIENT_ID;
-    if (!clientId) {
-      throw new Error('Naver Client Id Not Found');
-    }
-    return clientId;
+    return this.configService.get('NAVER_CLIENT_ID');
   }
 
   private get naverSecret(): string {
-    const secret = process.env.NAVER_SECRET;
-    if (!secret) {
-      throw new Error('Naver Secret Not Found');
-    }
-    return secret;
+    return this.configService.get('NAVER_SECRET');
   }
 
-  constructor(private readonly httpProvider: HttpProvider) {}
+  constructor(
+    private readonly httpProvider: HttpProvider,
+    private readonly configService: ConfigService,
+  ) {}
 
   getNaverLoginUrl(): string {
     const requestUrl =
       this.naverAuthUrl +
-      `?response_type=code&client_id=${
-        process.env.NAVER_CLIENT_ID
-      }&redirect_uri=${this.naverCallbackUrl}&state=${'RAMDOM_STATE'}`;
+      `?response_type=code&client_id=${this.naverClientId}&redirect_uri=${
+        this.naverCallbackUrl
+      }&state=${'RAMDOM_STATE'}`;
     console.log(requestUrl);
     return requestUrl;
   }
