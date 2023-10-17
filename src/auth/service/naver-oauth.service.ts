@@ -26,7 +26,7 @@ export class NaverOauthService {
     return response;
   }
 
-  async getAccesToken(
+  async getAccessToken(
     requestNaverCallBackQuery: RequestNaverCallBackQuery,
   ): Promise<ResponseNaverLogin> {
     const data = await this.naverOauthRepository.getAccesToken(

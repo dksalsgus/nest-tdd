@@ -40,10 +40,10 @@ export class LoginOauthController {
     description: '토큰',
     type: ResponseNaverLogin,
   })
-  async naverLoginCallback(
+  async getAccessToken(
     @Query() requestNaverCallBackQuery: RequestNaverCallBackQuery,
   ): Promise<ResponseNaverLogin> {
-    const result = await this.naverOauthService.getAccesToken(
+    const result = await this.naverOauthService.getAccessToken(
       requestNaverCallBackQuery,
     );
     return result;
