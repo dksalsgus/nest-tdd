@@ -7,9 +7,12 @@ import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh
 
 @Injectable()
 export class NaverOauthRepository {
+  private get serverUrl(): string {
+    return process.env.SERVER_URL;
+  }
   private readonly naverAuthUrl = 'https://nid.naver.com/oauth2.0/authorize';
   private readonly naverCallbackUrl =
-    'http://localhost:3000/login/oauth/naver/callback';
+    this.serverUrl + '/login/oauth/naver/callback';
   private readonly naverTokenUrl = 'https://nid.naver.com/oauth2.0/token';
   private readonly naverUserApiUrl = 'https://openapi.naver.com/v1/nid/me';
 
