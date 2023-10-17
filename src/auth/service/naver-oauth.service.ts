@@ -21,8 +21,8 @@ export class NaverOauthService {
 
   constructor(private readonly naverOauthRepository: NaverOauthRepository) {}
 
-  async naverLoginAuth(): Promise<string> {
-    const response = await this.naverOauthRepository.naverLoginAuth();
+  getNaverLoginUrl(): string {
+    const response = this.naverOauthRepository.getNaverLoginUrl();
     return response;
   }
 

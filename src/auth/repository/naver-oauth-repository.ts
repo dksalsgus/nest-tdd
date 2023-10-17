@@ -14,14 +14,13 @@ export class NaverOauthRepository {
   private readonly naverUserApiUrl = 'https://openapi.naver.com/v1/nid/me';
   constructor(private readonly httpProvider: HttpProvider) {}
 
-  async naverLoginAuth(): Promise<string> {
+  getNaverLoginUrl(): string {
     const requestUrl =
       this.naverAuthUrl +
       `?response_type=code&client_id=${
         process.env.NAVER_CLIENT_ID
       }&redirect_uri=${this.naverCallbackUrl}&state=${'RAMDOM_STATE'}`;
     console.log(requestUrl);
-    const response = await this.httpProvider.get(requestUrl, {});
     return requestUrl;
   }
 

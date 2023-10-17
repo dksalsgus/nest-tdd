@@ -27,10 +27,10 @@ export class LoginOauthController {
   constructor(private readonly naverOauthService: NaverOauthService) {}
 
   @Get('/naver')
-  @ApiOperation({ summary: '네이버 Oauth' })
+  @ApiOperation({ summary: '네이버 Oauth URL' })
   @ApiResponse({ status: 200, description: 'redirect naver oauth callback' })
-  async naverLogin(@Res() res: Response): Promise<void> {
-    const result = await this.naverOauthService.naverLoginAuth();
+  naverLogin(@Res() res: Response): void {
+    const result = this.naverOauthService.getNaverLoginUrl();
     return res.redirect(result);
   }
 
