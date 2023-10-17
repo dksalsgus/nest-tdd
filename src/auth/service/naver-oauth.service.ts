@@ -3,11 +3,13 @@ import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-t
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
 import { RequestNaverUserInfo } from '../model/request/request.naver-user-info';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
-import { ResponseNaverLogin } from '../model/response/response.naver-login';
+import {
+  ResponseNaverLogin,
+  ResponseNaverTokenRefresh,
+} from '../model/response/response.naver-login';
 import {
   NaverOauthRepository,
   NaverOauthTokenDeleteResult,
-  NaverOauthTokenRefreshResult,
   NaverUserResponse,
 } from '../repository/naver-oauth-repository';
 
@@ -43,11 +45,16 @@ export class NaverOauthService {
 
   async refreshAccessToken(
     requestRefreshNaverAccessToken: RequestRefreshNaverAccessToken,
-  ): Promise<NaverOauthTokenRefreshResult> {
+  ): Promise<ResponseNaverTokenRefresh> {
     const data = await this.naverOauthRepository.refreshAccessToken(
       requestRefreshNaverAccessToken,
     );
-    return data;
+    const {
+      access_token: accessToken,
+      expires_in: expiresIn,
+      token_type: tokenType,
+    } = data;
+    return { accessToken, tokenType, expiresIn };
   }
 
   async deleteToken(

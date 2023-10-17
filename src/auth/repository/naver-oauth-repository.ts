@@ -12,6 +12,23 @@ export class NaverOauthRepository {
     'http://localhost:3000/login/oauth/naver/callback';
   private readonly naverTokenUrl = 'https://nid.naver.com/oauth2.0/token';
   private readonly naverUserApiUrl = 'https://openapi.naver.com/v1/nid/me';
+
+  private get naverClientId(): string {
+    const clientId = process.env.NAVER_CLIENT_ID;
+    if (!clientId) {
+      throw new Error('Naver Client Id Not Found');
+    }
+    return clientId;
+  }
+
+  private get naverSecret(): string {
+    const secret = process.env.NAVER_SECRET;
+    if (!secret) {
+      throw new Error('Naver Secret Not Found');
+    }
+    return secret;
+  }
+
   constructor(private readonly httpProvider: HttpProvider) {}
 
   getNaverLoginUrl(): string {
@@ -31,7 +48,7 @@ export class NaverOauthRepository {
     const grantType = EnNaverGrantType.authorizationCode;
     const requestUrl =
       this.naverTokenUrl +
-      `?grant_type=${grantType}&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&code=${code}&state=${state}`;
+      `?grant_type=${grantType}&client_id=${this.naverClientId}&client_secret=${this.naverSecret}&code=${code}&state=${state}`;
     const data = await this.httpProvider.post<NaverOauthTokenResult>(
       requestUrl,
       {},
@@ -47,7 +64,7 @@ export class NaverOauthRepository {
     const { refreshToken } = requestRefreshNaverAccessToken;
     const requestUrl =
       this.naverTokenUrl +
-      `?grant_type=${grantType}&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&refresh_token=${refreshToken}`;
+      `?grant_type=${grantType}&client_id=${this.naverClientId}&client_secret=${this.naverSecret}&refresh_token=${refreshToken}`;
     const data = await this.httpProvider.post<NaverOauthTokenRefreshResult>(
       requestUrl,
       {},
@@ -64,7 +81,7 @@ export class NaverOauthRepository {
     const { accessToken } = requestDeleteNaverToken;
     const requestUrl =
       this.naverTokenUrl +
-      `?grant_type=${grantType}&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_SECRET}&access_token=${accessToken}&service_provider=${serviceProvider}`;
+      `?grant_type=${grantType}&client_id=${this.naverClientId}&client_secret=${this.naverSecret}&access_token=${accessToken}&service_provider=${serviceProvider}`;
     const data = await this.httpProvider.post<NaverOauthTokenDeleteResult>(
       requestUrl,
       {},

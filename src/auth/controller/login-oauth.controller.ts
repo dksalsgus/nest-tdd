@@ -61,12 +61,7 @@ export class LoginOauthController {
     const result = await this.naverOauthService.refreshAccessToken(
       requestRefreshAccessToken,
     );
-    const {
-      access_token: accessToken,
-      expires_in: expiresIn,
-      token_type: tokenType,
-    } = result;
-    return { accessToken, tokenType, expiresIn };
+    return result;
   }
 
   @Delete('/naver/token')

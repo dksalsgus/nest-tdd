@@ -6,6 +6,7 @@ export class GlobalCustomException extends Error {
     super(errorMessage);
   }
 }
+
 export enum EnErrorCode {
   userNotFound = 'USR001',
 }
