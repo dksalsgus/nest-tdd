@@ -92,7 +92,7 @@ export class NaverOauthRepository {
 
   async getNaverUserInfo(
     requestNaverUserInfo: RequestNaverUserInfo,
-  ): Promise<NaverUserResponse> {
+  ): Promise<NaverUserInfoResponse> {
     const { token, tokenType } = requestNaverUserInfo;
     const response = await this.httpProvider.get<NaverUserInfo>(
       this.naverUserApiUrl,
@@ -129,17 +129,17 @@ export enum EnNaverGrantType {
   delete = 'delete',
 }
 
-export interface NaverUserResponse {
+interface NaverUserInfo {
+  resultCode: string;
+  message: string;
+  response: NaverUserInfoResponse;
+}
+
+interface NaverUserInfoResponse {
   birthyear: string;
   email: string;
   id: string;
   mobile: string;
   mobile_e164: string;
   name: string;
-}
-
-export interface NaverUserInfo {
-  resultCode: string;
-  message: string;
-  response: NaverUserResponse;
 }

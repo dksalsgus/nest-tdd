@@ -92,14 +92,6 @@ export class LoginOauthController {
     const result = await this.naverOauthService.getNaverUserInfo(
       requestNaverUserInfo,
     );
-    const {
-      birthyear: birthYear,
-      email,
-      id,
-      mobile,
-      mobile_e164: mobileE164,
-      name,
-    } = result;
-    return { id, email, mobile, mobileE164, name, birthYear };
+    return result;
   }
 }

@@ -8,10 +8,8 @@ import {
   ResponseNaverLogin,
   ResponseNaverTokenRefresh,
 } from '../model/response/response.naver-login';
-import {
-  NaverOauthRepository,
-  NaverUserResponse,
-} from '../repository/naver-oauth-repository';
+import { ResponseNaverUserInfo } from '../model/response/response.naver-user-info';
+import { NaverOauthRepository } from '../repository/naver-oauth-repository';
 
 @Injectable()
 export class NaverOauthService {
@@ -69,10 +67,18 @@ export class NaverOauthService {
 
   async getNaverUserInfo(
     requestNaverUserInfo: RequestNaverUserInfo,
-  ): Promise<NaverUserResponse> {
+  ): Promise<ResponseNaverUserInfo> {
     const info = await this.naverOauthRepository.getNaverUserInfo(
       requestNaverUserInfo,
     );
-    return info;
+    const {
+      birthyear: birthYear,
+      email,
+      id,
+      mobile,
+      mobile_e164: mobileE164,
+      name,
+    } = info;
+    return { id, email, name, mobile, mobileE164, birthYear };
   }
 }
