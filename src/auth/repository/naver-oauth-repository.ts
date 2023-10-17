@@ -112,13 +112,13 @@ interface NaverOauthTokenResult {
   expires_in: string;
 }
 
-export interface NaverOauthTokenRefreshResult
+interface NaverOauthTokenRefreshResult
   extends Pick<
     NaverOauthTokenResult,
     'access_token' | 'expires_in' | 'token_type'
   > {}
 
-export interface NaverOauthTokenDeleteResult
+interface NaverOauthTokenDeleteResult
   extends Pick<NaverOauthTokenResult, 'access_token'> {
   result: string;
 }

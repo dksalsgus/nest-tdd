@@ -13,6 +13,7 @@ import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-t
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
 import { RequestNaverUserInfo } from '../model/request/request.naver-user-info';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
+import { ResponseDeleteNaverToken } from '../model/response/response.delete-naver-token';
 import {
   ResponseNaverDeleteToken,
   ResponseNaverLogin,
@@ -72,12 +73,11 @@ export class LoginOauthController {
   })
   async deleteNaverToken(
     @Body() requestRefreshAccessToken: RequestDeleteNaverToken,
-  ): Promise<ResponseNaverDeleteToken> {
+  ): Promise<ResponseDeleteNaverToken> {
     const result = await this.naverOauthService.deleteToken(
       requestRefreshAccessToken,
     );
-    const { access_token: accessToken, result: deleteResult } = result;
-    return { accessToken, result: deleteResult };
+    return result;
   }
 
   @Post('/naver/user')
