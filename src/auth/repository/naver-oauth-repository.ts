@@ -88,7 +88,7 @@ export class NaverOauthRepository {
   }
 }
 
-export interface NaverOauthTokenResult {
+interface NaverOauthTokenResult {
   access_token: string;
   refresh_token: string;
   token_type: string;

@@ -46,13 +46,7 @@ export class LoginOauthController {
     const result = await this.naverOauthService.getAccesToken(
       requestNaverCallBackQuery,
     );
-    const {
-      access_token: accessToken,
-      expires_in: expiresIn,
-      refresh_token: refreshToken,
-      token_type: tokenType,
-    } = result;
-    return { accessToken, refreshToken, tokenType, expiresIn };
+    return result;
   }
 
   @Post('/naver/refresh')
