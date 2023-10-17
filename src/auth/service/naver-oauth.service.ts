@@ -9,7 +9,7 @@ import {
   ResponseNaverTokenRefresh,
 } from '../model/response/response.naver-login';
 import { ResponseNaverUserInfo } from '../model/response/response.naver-user-info';
-import { NaverOauthRepository } from '../repository/naver-oauth-repository';
+import { NaverOauthRepository } from '../repository/naver-oauth.repository';
 
 @Injectable()
 export class NaverOauthService {
