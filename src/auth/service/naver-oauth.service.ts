@@ -12,7 +12,7 @@ import { ResponseNaverUserInfo } from '../model/response/response.naver-user-inf
 import { NaverOauthRepository } from '../repository/naver-oauth.repository';
 
 @Injectable()
-export class NaverOauthService {
+export class NaverOauthProvider {
   constructor(private readonly naverOauthRepository: NaverOauthRepository) {}
 
   getNaverLoginUrl(): string {

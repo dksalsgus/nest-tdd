@@ -20,12 +20,12 @@ import {
   ResponseNaverTokenRefresh,
 } from '../model/response/response.naver-login';
 import { ResponseNaverUserInfo } from '../model/response/response.naver-user-info';
-import { NaverOauthService } from '../service/naver-oauth.service';
+import { NaverOauthProvider } from '../service/naver-oauth.service';
 
 @ApiTags('Oauth Login')
 @Controller('/login/oauth')
 export class LoginOauthController {
-  constructor(private readonly naverOauthService: NaverOauthService) {}
+  constructor(private readonly naverOauthService: NaverOauthProvider) {}
 
   @Get('/naver')
   @ApiOperation({ summary: '네이버 Oauth URL' })
