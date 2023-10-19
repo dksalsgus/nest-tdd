@@ -4,7 +4,6 @@ import { RequestNaverCallBackQuery } from '../model/request/request.naver-callba
 import { RequestNaverUserInfo } from '../model/request/request.naver-user-info';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
 import { ResponseNaverLogin } from '../model/response/response.naver-login';
-import { ResponseNaverUserInfo } from '../model/response/response.naver-user-info';
 import { NaverOauthRepository } from '../repository/naver-oauth.repository';
 
 @Injectable()
@@ -57,7 +56,7 @@ export class NaverOauthProvider {
 
   async getNaverUserInfo(
     requestNaverUserInfo: RequestNaverUserInfo,
-  ): Promise<ResponseNaverUserInfo> {
+  ): Promise<NaverUserInfoResult> {
     const info = await this.naverOauthRepository.getNaverUserInfo(
       requestNaverUserInfo,
     );
@@ -82,4 +81,13 @@ export interface RefreshNaverTokenResult {
 export interface DeleteNaverTokenResult {
   accessToken: string;
   result: string;
+}
+
+export interface NaverUserInfoResult {
+  id: string;
+  name: string;
+  birthYear: string;
+  email: string;
+  mobile: string;
+  mobileE164: string;
 }

@@ -48,6 +48,13 @@ export class UserRepository {
   }
 
   async deleteUser(userId: number, trx: PrismaTransaction): Promise<void> {
-    const resutl = await trx.user.delete({ where: { id: userId } });
+    const result = await trx.user.delete({ where: { id: userId } });
+  }
+
+  async findUserByNameAndPhone(name: string, phone: string) {
+    const user = await this.prismaService.user.findFirst({
+      where: { name, phone },
+    });
+    return user;
   }
 }

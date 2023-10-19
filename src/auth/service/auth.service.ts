@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { UserRepository } from 'src/user/repository/user.repository';
 import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-token';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
@@ -8,7 +9,10 @@ import { NaverOauthProvider } from '../provider/naver-oauth.provider';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly naverOauthProvider: NaverOauthProvider) {}
+  constructor(
+    private readonly naverOauthProvider: NaverOauthProvider,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   getNaverLoginUrl(): string {
     const url = this.naverOauthProvider.getNaverLoginUrl();
@@ -24,7 +28,13 @@ export class AuthService {
       token: accessToken,
       tokenType,
     });
-    const {} = naverUserInfo;
+    const { mobile, name } = naverUserInfo;
+    const user = await this.userRepository.findUserByNameAndPhone(name, mobile);
+    if (user) {
+      //TODO: 로그인 및 토큰 발급
+      return;
+    }
+    //TODO: 회원가입 및 토큰 발급
   }
 
   async refreshNaverToken(
