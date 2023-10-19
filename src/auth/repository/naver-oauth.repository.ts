@@ -122,7 +122,7 @@ interface NaverOauthTokenDeleteResult
   result: string;
 }
 
-export enum EnNaverGrantType {
+enum EnNaverGrantType {
   authorizationCode = 'authorization_code',
   refreshToken = 'refresh_token',
   delete = 'delete',
