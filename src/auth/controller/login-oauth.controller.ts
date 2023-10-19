@@ -20,7 +20,7 @@ import {
   ResponseNaverTokenRefresh,
 } from '../model/response/response.naver-login';
 import { ResponseNaverUserInfo } from '../model/response/response.naver-user-info';
-import { NaverOauthProvider } from '../service/naver-oauth.service';
+import { NaverOauthProvider } from '../provider/naver-oauth.provider';
 
 @ApiTags('Oauth Login')
 @Controller('/login/oauth')
