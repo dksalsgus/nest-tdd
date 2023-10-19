@@ -4,6 +4,7 @@ import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-t
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
 import { ResponseDeleteNaverToken } from '../model/response/response.delete-naver-token';
+import { ResponseLogin } from '../model/response/response.login';
 import { ResponseNaverTokenRefresh } from '../model/response/response.naver-login';
 import { NaverOauthProvider } from '../provider/naver-oauth.provider';
 
@@ -19,7 +20,9 @@ export class AuthService {
     return url;
   }
 
-  async naverLogin(requestNaverCallBackQuery: RequestNaverCallBackQuery) {
+  async naverLogin(
+    requestNaverCallBackQuery: RequestNaverCallBackQuery,
+  ): Promise<ResponseLogin> {
     const result = await this.naverOauthProvider.getAccessToken(
       requestNaverCallBackQuery,
     );
@@ -35,6 +38,7 @@ export class AuthService {
       return;
     }
     //TODO: 회원가입 및 토큰 발급
+    return;
   }
 
   async refreshNaverToken(
