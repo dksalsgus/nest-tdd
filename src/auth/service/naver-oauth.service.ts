@@ -13,12 +13,6 @@ import { NaverOauthRepository } from '../repository/naver-oauth.repository';
 
 @Injectable()
 export class NaverOauthService {
-  private readonly naverAuthUrl = 'https://nid.naver.com/oauth2.0/authorize';
-  private readonly naverCallbackUrl =
-    'http://localhost:3000/login/oauth/naver/callback';
-  private readonly naverTokenUrl = 'https://nid.naver.com/oauth2.0/token';
-  private readonly naverUserApiUrl = 'https://openapi.naver.com/v1/nid/me';
-
   constructor(private readonly naverOauthRepository: NaverOauthRepository) {}
 
   getNaverLoginUrl(): string {
