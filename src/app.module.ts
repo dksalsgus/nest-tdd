@@ -13,7 +13,7 @@ import { UserModule } from './user/user.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV === 'prod' ? '.env.prod' : '.env.dev',
+      envFilePath: process.env.NODE_ENV === 'prod' ? '.env.prod' : '.env',
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('prod', 'dev', 'debug'),
         SERVER_URL: Joi.string().not().empty(),
