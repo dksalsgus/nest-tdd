@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/service/prisma.service';
 import { RequestCreateUser } from '../model/request/request.create-user';
 import { RequestUpdateUser } from '../model/request/request.update-user';
 import { UserLogRepository } from '../repository/user-log.repository';
+import { UserOauthRepository } from '../repository/user-oauth.repository';
 import { UserRepository } from '../repository/user.repository';
 
 @Injectable()
@@ -11,6 +12,7 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly userLogRepository: UserLogRepository,
+    private readonly userOauthRepository: UserOauthRepository,
     private readonly prismaService: PrismaService,
   ) {}
 
@@ -20,7 +22,7 @@ export class UserService {
   }
 
   async createUser(requestCreateUser: RequestCreateUser): Promise<number> {
-    const { email, name, password, phone } = requestCreateUser;
+    const { email, name, password, phone, serviceName } = requestCreateUser;
     const userId = await this.prismaService.$transaction(async (trx) => {
       const userId = await this.userRepository.createUser(
         {
@@ -29,6 +31,10 @@ export class UserService {
           name,
           phone,
         },
+        trx,
+      );
+      await this.userOauthRepository.create(
+        { service_name: serviceName, user_id: userId },
         trx,
       );
       const title = `${requestCreateUser.email} 생성`;
@@ -70,5 +76,10 @@ export class UserService {
   async findUser(userId: number): Promise<number> {
     const id = await this.userRepository.findUser(userId);
     return id;
+  }
+
+  async findUserByNameAndPhone(name: string, mobile: string): Promise<User> {
+    const user = await this.userRepository.findUserByNameAndPhone(name, mobile);
+    return user;
   }
 }

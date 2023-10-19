@@ -18,4 +18,4 @@ export class UserOauthRepository {
   }
 }
 
-type Create = Pick<UserOauth, 'service_name'>;
+type Create = Pick<UserOauth, 'service_name' | 'user_id'>;

@@ -1,18 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/user/repository/user.repository';
+import { UserService } from 'src/user/service/user.service';
 import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-token';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
 import { ResponseDeleteNaverToken } from '../model/response/response.delete-naver-token';
 import { ResponseLogin } from '../model/response/response.login';
-import { ResponseNaverTokenRefresh } from '../model/response/response.naver-login';
-import { NaverOauthProvider } from '../provider/naver-oauth.provider';
+import { JwtProvider } from '../provider/jwt.provider';
+import {
+  NaverOauthProvider,
+  NaverRfreshTokenResult,
+} from '../provider/naver-oauth.provider';
 
 @Injectable()
 export class AuthService {
+  private readonly oauthUserPassword: string = 'oauthPassword';
+
   constructor(
     private readonly naverOauthProvider: NaverOauthProvider,
-    private readonly userRepository: UserRepository,
+    private readonly jwtProvider: JwtProvider,
+    private readonly userService: UserService,
   ) {}
 
   getNaverLoginUrl(): string {
@@ -31,19 +37,32 @@ export class AuthService {
       token: accessToken,
       tokenType,
     });
-    const { mobile, name } = naverUserInfo;
-    const user = await this.userRepository.findUserByNameAndPhone(name, mobile);
+    const { mobile, name, email } = naverUserInfo;
+    const user = await this.userService.findUserByNameAndPhone(name, mobile);
     if (user) {
-      //TODO: 로그인 및 토큰 발급
-      return;
+      const { id, name } = user;
+      const tokenResult = this.jwtProvider.getAccessToken({ id, name });
+      const { accessToken, expiresIn, refreshToken } = tokenResult;
+      return { accessToken, refreshToken, expireIn: expiresIn };
     }
-    //TODO: 회원가입 및 토큰 발급
-    return;
+    const userId = await this.userService.createUser({
+      email,
+      name,
+      password: this.oauthUserPassword,
+      phone: mobile,
+      serviceName: 'NAVER',
+    });
+    const tokenResult = this.jwtProvider.getAccessToken({
+      id: userId,
+      name,
+    });
+    const { accessToken: jwtToken, expiresIn, refreshToken } = tokenResult;
+    return { accessToken: jwtToken, refreshToken, expireIn: expiresIn };
   }
 
   async refreshNaverToken(
     requestRefreshNaverAccessToken: RequestRefreshNaverAccessToken,
-  ): Promise<ResponseNaverTokenRefresh> {
+  ): Promise<NaverRfreshTokenResult> {
     const result = await this.naverOauthProvider.refreshAccessToken(
       requestRefreshNaverAccessToken,
     );

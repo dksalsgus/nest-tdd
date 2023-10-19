@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { UserRepository } from 'src/user/repository/user.repository';
+import { UserService } from 'src/user/service/user.service';
 import { UserModule } from 'src/user/user.module';
 import { LoginOauthController } from './controller/login-oauth.controller';
 import { LoginController } from './controller/login.controller';
@@ -25,9 +25,10 @@ import { AuthService } from './service/auth.service';
     AuthService,
     NaverOauthProvider,
     NaverOauthRepository,
-    UserRepository,
+    UserService,
     JwtProvider,
   ],
   controllers: [LoginController, LoginOauthController],
+  exports: [],
 })
 export class AuthModule {}

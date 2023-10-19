@@ -13,11 +13,7 @@ import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-t
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
 import { ResponseDeleteNaverToken } from '../model/response/response.delete-naver-token';
-import {
-  ResponseNaverDeleteToken,
-  ResponseNaverLogin,
-  ResponseNaverTokenRefresh,
-} from '../model/response/response.naver-login';
+import { ResponseLogin } from '../model/response/response.login';
 import { NaverOauthProvider } from '../provider/naver-oauth.provider';
 import { AuthService } from '../service/auth.service';
 
@@ -40,15 +36,13 @@ export class LoginOauthController {
   @Get('/naver/callback')
   @ApiOperation({ summary: '네이버 Oauth CallBack' })
   @ApiResponse({
-    description: '토큰',
-    type: ResponseNaverLogin,
+    description: '네이버 로그인 응답',
+    type: ResponseLogin,
   })
   async getAccessToken(
     @Query() requestNaverCallBackQuery: RequestNaverCallBackQuery,
-  ): Promise<ResponseNaverLogin> {
-    const result = await this.naverOauthService.getAccessToken(
-      requestNaverCallBackQuery,
-    );
+  ): Promise<ResponseLogin> {
+    const result = await this.authService.naverLogin(requestNaverCallBackQuery);
     return result;
   }
 
@@ -56,11 +50,10 @@ export class LoginOauthController {
   @ApiOperation({ summary: '네이버 Refresh Token' })
   @ApiResponse({
     description: '엑세스 토큰 갱신 응답',
-    type: ResponseNaverTokenRefresh,
   })
   async refreshAccessToken(
     @Body() requestRefreshAccessToken: RequestRefreshNaverAccessToken,
-  ): Promise<ResponseNaverTokenRefresh> {
+  ) {
     const result = await this.authService.refreshNaverToken(
       requestRefreshAccessToken,
     );
@@ -71,7 +64,7 @@ export class LoginOauthController {
   @ApiOperation({ summary: '네이버 Token 삭제' })
   @ApiResponse({
     description: '엑세스 토큰 삭제 응답',
-    type: ResponseNaverDeleteToken,
+    type: ResponseDeleteNaverToken,
   })
   async deleteNaverToken(
     @Body() requestRefreshAccessToken: RequestDeleteNaverToken,
