@@ -3,11 +3,7 @@ import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-t
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
 import { RequestNaverUserInfo } from '../model/request/request.naver-user-info';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
-import { ResponseDeleteNaverToken } from '../model/response/response.delete-naver-token';
-import {
-  ResponseNaverLogin,
-  ResponseNaverTokenRefresh,
-} from '../model/response/response.naver-login';
+import { ResponseNaverLogin } from '../model/response/response.naver-login';
 import { ResponseNaverUserInfo } from '../model/response/response.naver-user-info';
 import { NaverOauthRepository } from '../repository/naver-oauth.repository';
 
@@ -37,7 +33,7 @@ export class NaverOauthProvider {
 
   async refreshAccessToken(
     requestRefreshNaverAccessToken: RequestRefreshNaverAccessToken,
-  ): Promise<ResponseNaverTokenRefresh> {
+  ): Promise<RefreshNaverTokenResult> {
     const data = await this.naverOauthRepository.refreshAccessToken(
       requestRefreshNaverAccessToken,
     );
@@ -51,7 +47,7 @@ export class NaverOauthProvider {
 
   async deleteToken(
     requestDeleteNaverToken: RequestDeleteNaverToken,
-  ): Promise<ResponseDeleteNaverToken> {
+  ): Promise<DeleteNaverTokenResult> {
     const data = await this.naverOauthRepository.deleteToken(
       requestDeleteNaverToken,
     );
@@ -75,4 +71,15 @@ export class NaverOauthProvider {
     } = info;
     return { id, email, name, mobile, mobileE164, birthYear };
   }
+}
+
+export interface RefreshNaverTokenResult {
+  accessToken: string;
+  tokenType: string;
+  expiresIn: string;
+}
+
+export interface DeleteNaverTokenResult {
+  accessToken: string;
+  result: string;
 }

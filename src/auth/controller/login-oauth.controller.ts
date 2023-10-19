@@ -11,7 +11,6 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-token';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
-import { RequestNaverUserInfo } from '../model/request/request.naver-user-info';
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
 import { ResponseDeleteNaverToken } from '../model/response/response.delete-naver-token';
 import {
@@ -19,19 +18,22 @@ import {
   ResponseNaverLogin,
   ResponseNaverTokenRefresh,
 } from '../model/response/response.naver-login';
-import { ResponseNaverUserInfo } from '../model/response/response.naver-user-info';
 import { NaverOauthProvider } from '../provider/naver-oauth.provider';
+import { AuthService } from '../service/auth.service';
 
 @ApiTags('Oauth Login')
 @Controller('/login/oauth')
 export class LoginOauthController {
-  constructor(private readonly naverOauthService: NaverOauthProvider) {}
+  constructor(
+    private readonly naverOauthService: NaverOauthProvider,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('/naver')
   @ApiOperation({ summary: '네이버 Oauth URL' })
   @ApiResponse({ status: 200, description: 'redirect naver oauth callback' })
   naverLogin(@Res() res: Response): void {
-    const result = this.naverOauthService.getNaverLoginUrl();
+    const result = this.authService.getNaverLoginUrl();
     return res.redirect(result);
   }
 
@@ -59,7 +61,7 @@ export class LoginOauthController {
   async refreshAccessToken(
     @Body() requestRefreshAccessToken: RequestRefreshNaverAccessToken,
   ): Promise<ResponseNaverTokenRefresh> {
-    const result = await this.naverOauthService.refreshAccessToken(
+    const result = await this.authService.refreshNaverToken(
       requestRefreshAccessToken,
     );
     return result;
@@ -80,18 +82,18 @@ export class LoginOauthController {
     return result;
   }
 
-  @Post('/naver/user')
-  @ApiOperation({ summary: '네이버 유저 정보' })
-  @ApiResponse({
-    description: '네이버 유저 정보',
-    type: ResponseNaverUserInfo,
-  })
-  async getUserInfo(
-    @Body() requestNaverUserInfo: RequestNaverUserInfo,
-  ): Promise<ResponseNaverUserInfo> {
-    const result = await this.naverOauthService.getNaverUserInfo(
-      requestNaverUserInfo,
-    );
-    return result;
-  }
+  // @Post('/naver/user')
+  // @ApiOperation({ summary: '네이버 유저 정보' })
+  // @ApiResponse({
+  //   description: '네이버 유저 정보',
+  //   type: ResponseNaverUserInfo,
+  // })
+  // async getUserInfo(
+  //   @Body() requestNaverUserInfo: RequestNaverUserInfo,
+  // ): Promise<ResponseNaverUserInfo> {
+  //   const result = await this.naverOauthService.getNaverUserInfo(
+  //     requestNaverUserInfo,
+  //   );
+  //   return result;
+  // }
 }
