@@ -12,19 +12,32 @@ datasource db {
 
 
 model User {
-  id    Int  @id @default(autoincrement())
+  id    Int  @id @default(autoincrement()) 
   email String  @unique @db.VarChar(40)
-  name  String? @db.VarChar(20)
+  name  String @db.VarChar(20)
   password String @db.VarChar(20)
   phone String @db.VarChar(30)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  user_oauth UserOauth[]
+  user_log UserLog[]
   @@map("user")
 }
 
+model UserOauth{
+  id Int @id @default(autoincrement()) 
+  user User @relation(fields: [user_id],references: [id])
+  user_id Int 
+  service_name String @db.VarChar(10)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  @@map("user_oauth")
+}
+
 model UserLog{
-  id Int @id @default(autoincrement())
-  user_id Int
+  id Int @id @default(autoincrement()) 
+  user User @relation(fields: [user_id],references: [id]) 
+  user_id Int 
   title String @db.VarChar(50)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
