@@ -9,4 +9,5 @@ export class GlobalCustomException extends Error {
 
 export enum EnErrorCode {
   userNotFound = 'USR001',
+  naverOauthUrlError = 'NAO001',
 }
