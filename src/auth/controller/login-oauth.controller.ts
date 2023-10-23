@@ -14,16 +14,12 @@ import { RequestNaverCallBackQuery } from '../model/request/request.naver-callba
 import { RequestRefreshNaverAccessToken } from '../model/request/request.refresh-naver-access-token';
 import { ResponseDeleteNaverToken } from '../model/response/response.delete-naver-token';
 import { ResponseLogin } from '../model/response/response.login';
-import { NaverOauthProvider } from '../provider/naver-oauth.provider';
 import { AuthService } from '../service/auth.service';
 
 @ApiTags('Oauth Login')
 @Controller('/login/oauth')
 export class LoginOauthController {
-  constructor(
-    private readonly naverOauthService: NaverOauthProvider,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Get('/naver')
   @ApiOperation({ summary: '네이버 Oauth URL' })
@@ -69,7 +65,7 @@ export class LoginOauthController {
   async deleteNaverToken(
     @Body() requestRefreshAccessToken: RequestDeleteNaverToken,
   ): Promise<ResponseDeleteNaverToken> {
-    const result = await this.naverOauthService.deleteToken(
+    const result = await this.authService.deleteNaverToken(
       requestRefreshAccessToken,
     );
     return result;
