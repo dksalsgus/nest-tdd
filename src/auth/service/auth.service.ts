@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { NaverOauthUrlException } from 'src/common/exception/naver-oauth.exception';
 import { UserService } from 'src/user/service/user.service';
 import { RequestDeleteNaverToken } from '../model/request/request.delete-naver-token';
 import { RequestNaverCallBackQuery } from '../model/request/request.naver-callback-query';
@@ -23,6 +24,9 @@ export class AuthService {
 
   getNaverLoginUrl(): string {
     const url = this.naverOauthProvider.getNaverLoginUrl();
+    if (!url) {
+      throw new NaverOauthUrlException();
+    }
     return url;
   }
 
