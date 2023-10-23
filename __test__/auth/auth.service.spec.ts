@@ -43,8 +43,7 @@ describe('Auth Service Test', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn((key: string) => {
-              if (key === 'SERVER_URL') return 'www.naver.com';
-              return '';
+              return 'mock server url';
             }),
           },
         },
@@ -55,6 +54,10 @@ describe('Auth Service Test', () => {
     naverOauthProvider = testModule.get<NaverOauthProvider>(NaverOauthProvider);
     expect(authService).toBeDefined();
     expect(naverOauthProvider).toBeDefined();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('네이버 Oauth', () => {
