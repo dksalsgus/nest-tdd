@@ -1,8 +1,13 @@
+import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { JwtProvider } from 'src/auth/provider/jwt.provider';
-import { NaverOauthProvider } from 'src/auth/provider/naver-oauth.provider';
+import {
+  NaverAccessTokenResult,
+  NaverOauthProvider,
+  NaverUserInfoResult,
+} from 'src/auth/provider/naver-oauth.provider';
 import { NaverOauthRepository } from 'src/auth/repository/naver-oauth.repository';
 import { AuthService } from 'src/auth/service/auth.service';
 import { NaverOauthUrlException } from 'src/common/exception/naver-oauth.exception';
@@ -21,6 +26,8 @@ describe('Auth Service Test', () => {
 
   let authService: AuthService;
   let naverOauthProvider: NaverOauthProvider;
+  let userService: UserService;
+  let jwtService: JwtService;
 
   beforeEach(async () => {
     const testModule = await Test.createTestingModule({
@@ -36,8 +43,24 @@ describe('Auth Service Test', () => {
         JwtService,
         PrismaService,
         {
+          provide: HttpService,
+          useValue: {
+            axiosRef: {
+              post: jest.fn(async () => {
+                return { data: '' };
+              }),
+              get: jest.fn(async () => {
+                return { data: '' };
+              }),
+            },
+          },
+        },
+        {
           provide: HttpProvider,
-          useFactory: (httpService) => new HttpProvider(httpService),
+          inject: [HttpService],
+          useFactory: (httpService: HttpService) => {
+            return new HttpProvider(httpService);
+          },
         },
         {
           provide: ConfigService,
@@ -52,8 +75,12 @@ describe('Auth Service Test', () => {
 
     authService = testModule.get<AuthService>(AuthService);
     naverOauthProvider = testModule.get<NaverOauthProvider>(NaverOauthProvider);
+    userService = testModule.get<UserService>(UserService);
+    jwtService = testModule.get<JwtService>(JwtService);
     expect(authService).toBeDefined();
     expect(naverOauthProvider).toBeDefined();
+    expect(userService).toBeDefined();
+    expect(jwtService).toBeDefined();
   });
 
   afterEach(() => {
@@ -82,5 +109,23 @@ describe('Auth Service Test', () => {
         expect(loginUrl).toBe(naverAuthUrl);
       });
     });
+  });
+
+  describe('네이버 로그인', () => {
+    const naverUserInfo: NaverUserInfoResult = {
+      birthYear: '1992',
+      email: 'test@naver.com',
+      id: 'asdfasfdsaf',
+      mobile: '01012341234',
+      mobileE164: '+821012341234',
+      name: '테스터',
+    };
+
+    const accessTokenResult: NaverAccessTokenResult = {
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken',
+      tokenType: 'bearer',
+      expiresIn: '3600',
+    };
   });
 });
