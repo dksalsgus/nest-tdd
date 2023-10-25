@@ -8,6 +8,7 @@ import { CommonModule } from './common/common.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrismaService } from './prisma/service/prisma.service';
 import { UserModule } from './user/user.module';
+import { UserFoodModule } from './userFood/user-food.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     PrismaModule,
     AuthModule,
+    UserFoodModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
