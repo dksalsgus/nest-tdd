@@ -1,32 +1,97 @@
 import { Test } from '@nestjs/testing';
+import { UserFood } from '@prisma/client';
+import { UserNotFoundException } from 'src/common/exception/user.exception';
+import { UserRepository } from 'src/user/repository/user.repository';
 import { PrismaService } from '../../src/prisma/service/prisma.service';
+import { UserFoodRepository } from './UserFoodRepository';
+import { UserFoodService } from './UserFoodService';
 
 describe('User Food Service Test', () => {
   let userFoodRepository: UserFoodRepository;
+  let userFoodService: UserFoodService;
+  let userRepository: UserRepository;
   beforeEach(async () => {
-    const testModele = await Test.createTestingModule({
-      providers: [UserFoodRepository],
+    const testModule = await Test.createTestingModule({
+      providers: [
+        UserFoodRepository,
+        UserFoodService,
+        PrismaService,
+        UserRepository,
+      ],
     }).compile();
 
-    userFoodRepository = testModele.get<UserFoodRepository>(UserFoodRepository);
+    userFoodRepository = testModule.get<UserFoodRepository>(UserFoodRepository);
+    userFoodService = testModule.get<UserFoodService>(UserFoodService);
+    userRepository = testModule.get<UserRepository>(UserRepository);
 
     expect(userFoodRepository).toBeDefined();
+    expect(userFoodService).toBeDefined();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
+  const userId = 1;
+  const foodList: UserFood[] = [
+    {
+      id: 1,
+      name: '테스트음식',
+      user_id: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ];
   describe('유저 음식 리스트', () => {
-    it('리스트', () => {});
+    it('유저 없는경우', async () => {
+      jest
+        .spyOn(userRepository, 'findUser')
+        .mockImplementation(async () => undefined);
+
+      await expect(
+        async () => await userFoodService.getList(0),
+      ).rejects.toThrowError(UserNotFoundException);
+    });
+
+    it('리스트', async () => {
+      jest
+        .spyOn(userFoodRepository, 'getList')
+        .mockImplementation(async () => foodList);
+      const list = await userFoodService.getList(userId);
+      expect(list).toBeInstanceOf(Array);
+    });
   });
+
+  describe('음식 생성', () => {
+    const createFood: { userId: number; name: string } = {
+      name: '테스트 음식',
+      userId: 0,
+    };
+
+    it('유저가 없는경우', async () => {
+      jest
+        .spyOn(userRepository, 'findUser')
+        .mockImplementation(async () => undefined);
+
+      expect(
+        async () => await userFoodService.create(createFood),
+      ).rejects.toThrowError(UserNotFoundException);
+      expect(userRepository.findUser).toBeCalledTimes(1);
+    });
+
+    it('음식 생성 성공', async () => {
+      jest.spyOn(userRepository, 'findUser').mockImplementation(async () => 1);
+
+      jest
+        .spyOn(userFoodRepository, 'createUserFood')
+        .mockImplementation(async () => 1);
+
+      await userFoodService.create(createFood);
+
+      expect(userRepository.findUser).toBeCalledTimes(1);
+      expect(userFoodRepository.createUserFood).toBeCalledTimes(1);
+    });
+  });
+  describe('음식 수정', () => {});
+  describe('음식 삭제', () => {});
 });
-
-export class UserFoodRepository {
-  constructor(private readonly prismaService: PrismaService) {}
-
-  async getList() {
-    const list = await this.prismaService.userFood.findMany();
-    return list;
-  }
-}
