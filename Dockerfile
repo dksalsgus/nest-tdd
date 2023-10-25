@@ -41,7 +41,6 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Copy the rest of the source files into the image.
 COPY . .
 
-RUN npm run generate
 # Run the build script.
 RUN npm run build
 
@@ -51,7 +50,7 @@ RUN npm run build
 FROM base as final
 
 # Use production node environment by default.
-ENV NODE_ENV production
+ENV NODE_ENV prod
 
 # Run the application as a non-root user.
 USER node
