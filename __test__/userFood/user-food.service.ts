@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { UserFoodNotFoundException } from 'src/common/exception/user-food.exception';
 import { UserNotFoundException } from 'src/common/exception/user.exception';
 import { PrismaService } from 'src/prisma/service/prisma.service';
 import { UserRepository } from '../../src/user/repository/user.repository';
-import { UserFoodRepository } from './UserFoodRepository';
+import { UserFoodRepository } from './user-food.repository';
 
 @Injectable()
 export class UserFoodService {
@@ -42,6 +43,20 @@ export class UserFoodService {
       return userFoodId;
     });
   }
+
+  async updateFood(
+    foodId: number,
+    requestUpdateFood: RequestUpdateFood,
+  ): Promise<void> {
+    const food = await this.userFoodRepository.findFoodById(foodId);
+    if (!food) {
+      throw new UserFoodNotFoundException();
+    }
+    await this.prismaService.$transaction(async (trx) => {
+      const { name } = requestUpdateFood;
+      await this.userFoodRepository.updateFood(foodId, { name }, trx);
+    });
+  }
 }
 
 export interface RequestCreateUserFood {
@@ -51,5 +66,9 @@ export interface RequestCreateUserFood {
 
 export interface ResponseUserFood {
   id: number;
+  name: string;
+}
+
+export interface RequestUpdateFood {
   name: string;
 }

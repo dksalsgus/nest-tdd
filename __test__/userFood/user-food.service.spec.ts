@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing';
 import { UserFood } from '@prisma/client';
+import { UserFoodNotFoundException } from 'src/common/exception/user-food.exception';
 import { UserNotFoundException } from 'src/common/exception/user.exception';
 import { UserRepository } from 'src/user/repository/user.repository';
 import { PrismaService } from '../../src/prisma/service/prisma.service';
-import { UserFoodRepository } from './UserFoodRepository';
-import { UserFoodService } from './UserFoodService';
+import { UserFoodRepository } from './user-food.repository';
+import { UserFoodService } from './user-food.service';
 
 describe('User Food Service Test', () => {
   let userFoodRepository: UserFoodRepository;
@@ -92,6 +93,39 @@ describe('User Food Service Test', () => {
       expect(userFoodRepository.createUserFood).toBeCalledTimes(1);
     });
   });
-  describe('음식 수정', () => {});
+
+  describe('음식 수정', () => {
+    const foodId = 1;
+    const updateFood: { name: string } = { name: '수정음식이름' };
+    it('음식 없는경우', async () => {
+      jest
+        .spyOn(userFoodRepository, 'findFoodById')
+        .mockImplementation(() => undefined);
+
+      expect(
+        async () => await userFoodService.updateFood(foodId, updateFood),
+      ).rejects.toThrowError(UserFoodNotFoundException);
+
+      expect(userFoodRepository.findFoodById).toBeCalledTimes(1);
+    });
+
+    it('수정 성공', async () => {
+      jest
+        .spyOn(userFoodRepository, 'findFoodById')
+        .mockImplementation(async () => ({
+          id: 1,
+          name: '테스트음식',
+        }));
+
+      jest
+        .spyOn(userFoodRepository, 'updateFood')
+        .mockImplementation(async () => undefined);
+
+      await userFoodService.updateFood(foodId, updateFood);
+
+      expect(userFoodRepository.findFoodById).toBeCalledTimes(1);
+      expect(userFoodRepository.updateFood).toBeCalledTimes(1);
+    });
+  });
   describe('음식 삭제', () => {});
 });

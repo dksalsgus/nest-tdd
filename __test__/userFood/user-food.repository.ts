@@ -28,6 +28,28 @@ export class UserFoodRepository {
     });
     return result.id;
   }
+
+  async findFoodById(foodId: number): Promise<FindFoodById> {
+    const food = await this.prismaService.userFood.findFirst({
+      select: { id: true, name: true },
+      where: { id: foodId },
+    });
+    return food;
+  }
+
+  async updateFood(
+    foodId: number,
+    updateFood: UpdateFood,
+    trx: PrismaTransaction,
+  ): Promise<void> {
+    const result = await trx.userFood.update({
+      data: updateFood,
+      where: { id: foodId },
+    });
+  }
 }
 
 type Create = Pick<UserFood, 'name' | 'user_id'>;
+type FindFoodById = Pick<UserFood, 'id' | 'name'>;
+
+type UpdateFood = Pick<UserFood, 'name'>;
