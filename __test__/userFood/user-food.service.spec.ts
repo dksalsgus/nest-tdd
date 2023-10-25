@@ -127,5 +127,33 @@ describe('User Food Service Test', () => {
       expect(userFoodRepository.updateFood).toBeCalledTimes(1);
     });
   });
-  describe('음식 삭제', () => {});
+
+  describe('음식 삭제', () => {
+    const foodId = 1;
+    it('삭제할 음식이 없는경우', async () => {
+      jest
+        .spyOn(userFoodRepository, 'findFoodById')
+        .mockImplementation(async () => undefined);
+
+      expect(
+        async () => await userFoodService.deleteFood(foodId),
+      ).rejects.toThrowError(UserFoodNotFoundException);
+      expect(userFoodRepository.findFoodById).toBeCalledTimes(1);
+    });
+
+    it('삭제 성공', async () => {
+      jest
+        .spyOn(userFoodRepository, 'findFoodById')
+        .mockImplementation(async () => ({ id: 1, name: '삭제할음식' }));
+
+      jest
+        .spyOn(userFoodRepository, 'delete')
+        .mockImplementation(async () => undefined);
+
+      await userFoodService.deleteFood(foodId);
+
+      expect(userFoodRepository.findFoodById).toBeCalledTimes(1);
+      expect(userFoodRepository.delete).toBeCalledTimes(1);
+    });
+  });
 });

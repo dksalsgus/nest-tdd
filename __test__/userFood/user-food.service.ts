@@ -57,6 +57,17 @@ export class UserFoodService {
       await this.userFoodRepository.updateFood(foodId, { name }, trx);
     });
   }
+
+  async deleteFood(foodId: number): Promise<void> {
+    const food = await this.userFoodRepository.findFoodById(foodId);
+    if (!food) {
+      throw new UserFoodNotFoundException();
+    }
+
+    await this.prismaService.$transaction(async (trx) => {
+      await this.userFoodRepository.delete(foodId, trx);
+    });
+  }
 }
 
 export interface RequestCreateUserFood {

@@ -47,6 +47,10 @@ export class UserFoodRepository {
       where: { id: foodId },
     });
   }
+
+  async delete(foodId: number, trx: PrismaTransaction): Promise<void> {
+    const result = await trx.userFood.delete({ where: { id: foodId } });
+  }
 }
 
 type Create = Pick<UserFood, 'name' | 'user_id'>;
