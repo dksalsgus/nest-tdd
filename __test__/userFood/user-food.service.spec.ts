@@ -55,6 +55,8 @@ describe('User Food Service Test', () => {
     });
 
     it('리스트', async () => {
+      jest.spyOn(userRepository, 'findUser').mockImplementation(async () => 1);
+
       jest
         .spyOn(userFoodRepository, 'getList')
         .mockImplementation(async () => foodList);
@@ -129,6 +131,7 @@ describe('User Food Service Test', () => {
   });
 
   describe('음식 삭제', () => {
+    //
     const foodId = 1;
     it('삭제할 음식이 없는경우', async () => {
       jest
