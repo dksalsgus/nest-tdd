@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "command": "npm run start:dev",
+            "command": "nvm use v18 && npm run start:dev",
             "name": "Run debug dev",
             "request": "launch",
             "type": "node-terminal",
